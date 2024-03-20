@@ -6,7 +6,7 @@ Skills used: Aggregate Functions, CTE's, Temp Tables, Joins, Creating Views, Dat
 
 -- 1. Inspecting the dataset
 
--- g  ather information about the dataset
+-- gather information about the dataset
 select table_name, table_type, ddl
 from bigquery-public-data.thelook_ecommerce.INFORMATION_SCHEMA.TABLES
 ;
