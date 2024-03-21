@@ -119,10 +119,3 @@ insert into case_study_1.table1
 
 select *
 from `case_study_1.table1`
-
-
-
-
-
-
-
