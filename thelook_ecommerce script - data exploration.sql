@@ -20,11 +20,7 @@ order by table_name;
 select *
 from `bigquery-public-data.thelook_ecommerce.order_items` limit 1000;
 select *
-from `bigquery-public-data.thelook_ecommerce.orders`limit 1000;
-select *
 from `bigquery-public-data.thelook_ecommerce.products`limit 1000;
-select *
-from `bigquery-public-data.thelook_ecommerce.inventory_items`limit 1000;
 
 -- 2. Ecommerce Metrics & KPIs
 
