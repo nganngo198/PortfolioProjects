@@ -86,19 +86,19 @@ str(T10)
 str(T11)
 str(T12)
 ```
-# Convert started_at and ended_at to datetime so that they can stack correctly 
+Convert started_at and ended_at to datetime so that they can stack correctly 
 ```{r}
 T12 <-mutate(T12,started_at = mdy_hm(started_at),ended_at = mdy_hm(ended_at))
 ```
 
-# Stack all dataframes into a big dataframe
+Stack all dataframes into a big dataframe
 ```{r}
 all_trips <- bind_rows(T01,T02,T03,T04,T05,T06,
                        T07,T08,T09,T10,T11,T12)
 str(all_trips)
 ```
 # STEP 3: CLEAN UP AND ADD DATA TO PREPARE FOR ANALYSIS
-# Inspect the new table that has been created
+Inspect the new table that has been created
 ```{r}
 colnames(all_trips) #List of column names
 nrow(all_trips) #How many rows are in data frame?
@@ -107,12 +107,12 @@ head(all_trips)#See the first 6 rows of data frame.  Also tail(all_trips)
 str(all_trips)#See list of columns and data types (numeric, character, etc)
 summary(all_trips)#Statistical summary of data. Mainly for numberics
 ```
-# Inspect value in each colume
+Inspect value in each colume
 ```{r}
 table(all_trips$rideable_type)
 table(all_trips$member_casual)
 ```
-# The information can only be condensed at the level of individual rides, which is overly detailed. It would be beneficial to include supplementary columns, such as day, month, and year, to offer more options for consolidating the data.
+The information can only be condensed at the level of individual rides, which is overly detailed. It would be beneficial to include supplementary columns, such as day, month, and year, to offer more options for consolidating the data.
 ```{r}
 all_trips$started_date <- as.Date(all_trips$started_at)
 all_trips$month <- format(as.Date(all_trips$started_date),"%m")
@@ -121,24 +121,24 @@ all_trips$year <- format(as.Date(all_trips$started_date),"%Y")
 all_trips$day_of_week <- format(as.Date(all_trips$started_date),"%A")
 ```
 
-# Calculate the "ride_length" attribute to futher analysis
+Calculate the "ride_length" attribute to futher analysis
 
 ```{r}
 all_trips$ride_length <- difftime(all_trips$ended_at,all_trips$started_at)
 ```
-# Convert "ride_length" from Factor to numeric so we can run calculations on the data
+Convert "ride_length" from Factor to numeric so we can run calculations on the data
 ```{r}
 is.factor(all_trips$ride_length)
 all_trips$ride_length <- as.numeric(as.character(all_trips$ride_length))
 is.numeric(all_trips$ride_length)
 ```
-# Inspect the structure of the columns
+Inspect the structure of the columns
 ```{r}
 summary(all_trips)
 min(all_trips$ride_length,na.rm=TRUE) #there are numerous entries indicating occasions where bikes were removed from docks for quality checks conducted by Divvy, therefore the ride_length was recorded as negative
 
 ```
-# We will create a new version of the dataframe (v2) since negative data is being removed
+We will create a new version of the dataframe (v2) since negative data is being removed
 ```{r}
 all_trips_v2 <- all_trips[!(all_trips$start_station_name == "HQ QR" | all_trips$ride_length<0),]
 # drop na data
@@ -146,7 +146,7 @@ all_trips_v2 <- na.omit(all_trips_v2)
 ```
 ## STEP 4: CONDUCT DESCRIPTIVE ANALYSIS
 
-# Descriptive analysis on ride_length (all figures in seconds)
+Descriptive analysis on ride_length (all figures in seconds)
 ```{r}
 mean(all_trips_v2$ride_length) #straight average (total ride length / rides)
 median(all_trips_v2$ride_length) #midpoint number in the ascending array of ride lengths
@@ -154,7 +154,7 @@ max(all_trips_v2$ride_length) #longest ride
 min(all_trips_v2$ride_length) #shortest ride
 # summary(all_trips_v2$ride_length)
 ```
-# Compare members and casual users
+Compare members and casual users
 ```{r}
 aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual, FUN = mean)
 aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual, FUN = median)
@@ -162,12 +162,12 @@ aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual, FUN = max)
 aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual, FUN=min)
 
 ```
-# See the average ride time by each day for members vs casual users
+See the average ride time by each day for members vs casual users
 ```{r}
 all_trips_v2$day_of_week <- ordered(all_trips_v2$day_of_week, levels=c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
 aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual + all_trips_v2$day_of_week, FUN = mean)
 ```
-# analyze ridership data by type and weekday
+Analyze ridership data by type and weekday
 ```{r}
 all_trips_v2 %>% 
   mutate(weekday = wday(started_at, label = TRUE)) %>%  #creates weekday field using wday()
@@ -177,7 +177,7 @@ all_trips_v2 %>%
   arrange(member_casual, weekday)								# sorts
 
 ```
-# Let's visualize the number of rides by rider type
+Let's visualize the number of rides by rider type
 ```{r}
 all_trips_v2 %>% 
 mutate(weekday = wday(started_at, label = TRUE)) %>% 
@@ -189,7 +189,7 @@ ggplot(aes(x = weekday, y = number_of_rides, fill = member_casual)) +
 geom_col(position = "dodge")
 
 ```
-# Let's create a visualization for average duration
+Let's create a visualization for average duration
 ```{r}
 all_trips_v2 %>% 
 mutate(weekday = wday(started_at, label = TRUE)) %>% 
